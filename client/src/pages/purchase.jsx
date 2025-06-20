@@ -214,7 +214,7 @@ function Purchase() {
                     onClick={() => setPId(index)}
                     className={`${pId === index ? "bg-green-300" : ""}`}
                   >
-                    <div className="flex justify-between py-1 border-b-1 hover:bg-green-300 overflow-hidden">
+                    <div className="flex justify-between py-1 border-b-1 hover:bg-green-300 overflow-hidden items-center">
                       <p className="text-[12pt] w-[60%] ">
                         {items.productName}
                       </p>
