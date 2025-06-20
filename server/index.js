@@ -8,6 +8,9 @@ const OrderList = require("./schema/orderlist.js");
 const CreditPerson = require("./schema/credit_person.js");
 const bcrypt = require("bcrypt");
 
+//import routes
+const authRoute = require("./routes/auth.js");
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -30,32 +33,36 @@ async function connectDB() {
 
 connectDB();
 
-// async function createInitialUser() {
-//   const existing = await Username.findOne({ username: "daz3store" });
-//   if (!existing) {
-//     const hashedPassword = await bcrypt.hash("mel0915", 10);
-//     const newUser = new Username({
-//       username: "dazStore",
-//       password: hashedPassword,
-//     });
-//     await newUser.save();
-//     console.log("Initial user created!");
-//   } else {
-//     console.log("User already exists.");
-//   }
-// }
+async function createInitialUser() {
+  const username = "dazStore";
+  const existing = await Username.findOne({ username });
+  if (!existing) {
+    const hashedPassword = await bcrypt.hash("mel0915", 10);
+    const newUser = new Username({
+      username,
+      password: hashedPassword,
+    });
+    await newUser.save();
+    console.log("Initial user created!");
+  } else {
+    console.log("User already exists.");
+  }
+}
 
 // Call this function once after DB connection
-// createInitialUser();
+//createInitialUser();
+
+//test route
+app.use("/api/auth", authRoute);
 
 // get username
-app.get("/get/username", (req, res) => {
-  Username.find()
-    .then((data) => {
-      res.json(data);
-    })
-    .catch((error) => res.json(error));
-});
+ app.get("/get/username", (req, res) => {
+   Username.find()
+     .then((data) => {
+       res.json(data);
+     })
+     .catch((error) => res.json(error));
+ });
 
 //login
 app.post("/login", async (req, res) => {
@@ -111,7 +118,7 @@ app.post("/add_product", async (req, res) => {
 });
 
 //add person to credit
-app.post("/add_credit_person", async (req, res) => { 
+app.post("/add_credit_person", async (req, res) => {
   const { name, items, totalCredit } = req.body;
 
   try {
@@ -143,7 +150,7 @@ app.get("/get/orders", (req, res) => {
       res.json(data);
     })
     .catch((error) => res.json(error));
-})
+});
 
 //delete product
 app.delete("/delete_product/:id", async (req, res) => {
@@ -210,6 +217,6 @@ app.post("/add_purchase", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
+app.listen(process.env.PORT, () => {
   console.log("Server is running on port 3000");
 });
