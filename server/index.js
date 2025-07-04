@@ -56,13 +56,13 @@ async function createInitialUser() {
 app.use("/api/auth", authRoute);
 
 // get username
- app.get("/get/username", (req, res) => {
-   Username.find()
-     .then((data) => {
-       res.json(data);
-     })
-     .catch((error) => res.json(error));
- });
+app.get("/get/username", (req, res) => {
+  Username.find()
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((error) => res.json(error));
+});
 
 //login
 app.post("/login", async (req, res) => {
@@ -146,6 +146,15 @@ app.get("/get/products", (req, res) => {
 //get all orders
 app.get("/get/orders", (req, res) => {
   OrderList.find()
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((error) => res.json(error));
+});
+
+//get all credits
+app.get("/get/creditsList", (req, res) => {
+  CreditPerson.find()
     .then((data) => {
       res.json(data);
     })

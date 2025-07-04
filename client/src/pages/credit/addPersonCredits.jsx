@@ -10,12 +10,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getCredits } from "@/support/helper";
 import axios, { all } from "axios";
 
 function AddPerson({ setAddPersonCredits, allItems, setAllItems }) {
   const [name, setName] = useState("");
+  const [creditsList, setCreditsList] = useState([]);
+
+  useEffect(() => {
+    //update the data from the credits data
+    getCredits(setCreditsList);
+  },[creditsList])
 
   const handleAddPerson = async () => {
+
+    if (!name) {
+      alert('Please Enter the Credit Name!!');
+      return;
+    }
+
+    // if (creditsList.some(person => person.name === name)) {
+    //   alert('The Name that you Enter is already exists!');
+    //   return;
+    // }
+
     const personData = {
       name: name,
       items: allItems,
@@ -29,6 +47,26 @@ function AddPerson({ setAddPersonCredits, allItems, setAllItems }) {
         "http://localhost:3000/add_credit_person",
         personData
       );
+
+      // update stock quantities in the database
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/update_stock",
+          allItems.map((item) => ({
+            barcode: item.barcode,
+            qty: item.qty,
+          }))
+        );
+
+        if (response.status !== 200) {
+          throw new Error("Failed to complete the purchase");
+        }
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error updating stock quantities:", error);
+        alert("Failed to update stock quantities. Please try again.");
+        return;
+      }
 
       if (!response.data.success) {
         throw new Error("Failed to Add Person");
@@ -58,6 +96,7 @@ function AddPerson({ setAddPersonCredits, allItems, setAllItems }) {
             type={"text"}
             placeholder="Enter name"
             className={"w-full"}
+            value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
@@ -68,12 +107,13 @@ function AddPerson({ setAddPersonCredits, allItems, setAllItems }) {
               <SelectValue placeholder="Select Name" />
             </SelectTrigger>
             <SelectContent>
-              {}
-              <SelectItem value="Retail">Retail</SelectItem>
-              <SelectItem value="Wholesalex12">Wholesalex12</SelectItem>
-              <SelectItem value="Wholesalex6">Wholesalex6</SelectItem>
-              <SelectItem value="Wholesalex10">Wholesalex10</SelectItem>
-              <SelectItem value="Wholesalex5">Wholesalex5</SelectItem>
+              {[...new Set(creditsList.map((c) => c.name))]
+                .filter((n) => n && n.trim() !== "")
+                .map((uniqueName) => (
+                  <SelectItem key={uniqueName} value={uniqueName}>
+                    {uniqueName}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
         </div>
