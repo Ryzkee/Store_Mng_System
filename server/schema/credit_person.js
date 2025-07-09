@@ -9,6 +9,7 @@ const CreditPersonSchema = new mongoose.Schema({
     price: Number,
   }],
   totalCredit: { type: Number, default: 0 },
+  partialpayment: {type: Number,default: 0},
   dateLastCredited: { type: Date, default: Date.now },
   status: { type: String, default: "Unpaid" }, // paid, unpaid, overdue
   datePaid: { type: Date, default: null },

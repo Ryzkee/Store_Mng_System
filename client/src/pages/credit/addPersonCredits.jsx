@@ -29,9 +29,9 @@ function AddPerson({ setAddPersonCredits, allItems, setAllItems }) {
       return;
     }
 
-    // if (creditsList.some(person => person.name === name)) {
-    //   alert('The Name that you Enter is already exists!');
-    //   return;
+    // if (creditsList.find(cname => cname.name) == name) {
+      
+
     // }
 
     const personData = {
