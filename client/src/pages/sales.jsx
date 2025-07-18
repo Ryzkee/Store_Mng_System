@@ -59,7 +59,7 @@ function Sales() {
     });
   };
 
-  console.log(selectedSaleId);
+  //console.log(selectedSaleId);
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center relative text-[12pt]">
       <Card className={"w-full h-full flex flex-col"}>

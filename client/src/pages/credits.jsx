@@ -3,65 +3,164 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { getallProducts, getSales, getCredits } from "@/support/helper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X, UserRoundPlus, Search, BanknoteArrowUp, Camera } from "lucide-react";
-import { useFormState } from "react-dom";
+import {
+  X,
+  UserRoundPlus,
+  Search,
+  BanknoteArrowUp,
+  Camera,
+} from "lucide-react";
+import axios from "axios";
 
 //window for adding partial payment
-function AddPartial({ setPartial, setIsOpen, cPerson }) {
+function AddPartial({
+  creditsList,
+  partial,
+  setPartial,
+  setIsOpen,
+  cPerson,
+  apiUrl,
+}) {
   const selectedPerson = cPerson;
+
   const handleIsOpen = () => {
     setIsOpen(false);
   };
 
-  
+  //calculate the Remaining Partial Amt
+  const remainingPartialPayment = () => {
+    let totalCredits;
+    let remainingAmtToPay;
+    const person = creditsList.filter((c) => c.name === selectedPerson);
+
+    if (person.length === 0) return null;
+    totalCredits = person.reduce((sum, c) => sum + c.totalCredit, 0);
+    remainingAmtToPay = person ? person[0].partialpayment : 0;
+
+    let remainingAmint = totalCredits - remainingAmtToPay;
+    return remainingAmint;
+  };
+
+  //add a partial payment
+  const handleAddPartialPayment = async () => {
+    if (selectedPerson === "") {
+      alert("Please select a person to pay");
+      return;
+    }
+
+    if (partial > remainingPartialPayment()) {
+      alert("You have entered an amount greater than the remaining balance!");
+      return;
+    }
+
+    if (!partial || partial === "") {
+      alert("Please enter a valid amount");
+      return;
+    }
+
+    if (partial <= 0) {
+      alert("Partial payment must be greater than 0");
+      return;
+    }
+
+    const partialNum = Number(partial);
+    const remaining = Number(remainingPartialPayment());
+
+    if (partialNum === remaining) {
+      try {
+        // Send update to backend for full payment
+        await axios.post(`${apiUrl}/delete_credit_by_name`, {
+          name: selectedPerson,
+        });
+        alert("Full payment recorded successfully!");
+      } catch (error) {
+        console.error("Error updating full payment:", error);
+        alert("Failed to record full payment. Please try again.");
+      }
+    } else if (partialNum < remaining) {
+      // Proceed with partial payment
+      try {
+        // Find the selected person's credit entry
+        const person = creditsList.find((c) => c.name === selectedPerson);
+        if (!person) return;
+
+        // Send update to backend
+        await axios.post(`${apiUrl}/add_partial_payment`, {
+          name: selectedPerson,
+          partialpayment: Number(partial),
+        });
+        alert("Partial payment recorded successfully!");
+      } catch (err) {
+        // Handle error (optional: show notification)
+        console.error(err);
+        alert("Failed to record partial payment. Please try again.");
+      }
+    }
+
+    setPartial("");
+    setIsOpen(false);
+    window.location.reload();
+  };
 
   //console.log(selectedPerson);
-
+  //console.log(creditsList);
   return (
     <Card className={"px-5"}>
       <div className="flex justify-between">
-        <h1>Enter Partial Payment</h1>
+        <div>
+          <h1 className="text-[12pt] font-bold mb-5">Enter Partial Payment</h1>
+          <p>
+            Partial Payment:{" ₱"}
+            {(() => {
+              const person = creditsList.find((c) => c.name === selectedPerson);
+              return person ? (
+                <span>{person.partialpayment.toFixed(2)}</span>
+              ) : null;
+            })()}
+          </p>
+          <p>
+            Remaining Balance:{" ₱"}
+            {(() => {
+              const person = creditsList.find((c) => c.name === selectedPerson);
+              return person ? (
+                <span>{remainingPartialPayment().toFixed(2)}</span>
+              ) : null;
+            })()}
+          </p>
+        </div>
+
         <Button className={"bg-red-500"} onClick={handleIsOpen}>
           <X />
         </Button>
       </div>
-      <h1 className="text-3xl">To: <span>{selectedPerson}</span>
+      <h1 className="text-2xl">
+        To: <span>{selectedPerson}</span>
       </h1>
+      <p
+        className={`w-full flex justify-center text-center  items-center bg-red-300 ${
+          partial > remainingPartialPayment() ? "block" : "hidden"
+        } px-4`}
+      >
+        Subra ang iyong nilagay! Ang kanyang Balanse ay nasa ₱
+        {remainingPartialPayment > 0 ? remainingPartialPayment : 0}.00 lamang!!
+      </p>
       <CardContent>
-        <Input type="number" className={""} />
+        <Input
+          type="number"
+          className={""}
+          value={partial}
+          onChange={(e) => setPartial(e.target.value)}
+        />
       </CardContent>
-      <Button className={"bg-blue-500"}>Add</Button>
+      <Button className={"bg-blue-500"} onClick={handleAddPartialPayment}>
+        Add
+      </Button>
     </Card>
   );
 }
 
-// function for fullpayment method
-function FullPayment({ setPartial, setFPisOpen, cPerson }) {
-  const selectedPerson = cPerson;
-  const handleIsOpen = () => {
-    setFPisOpen(false);
-  };
-  return (
-    <Card className={"px-5"}>
-      <div className="flex justify-between">
-        <h1>Enter Payment</h1>
-        <Button className={"bg-red-500"} onClick={handleIsOpen}>
-          <X />
-        </Button>
-      </div>
-      <h1 className="text-3xl">
-        To: <span>{selectedPerson}</span>
-      </h1>
-      <CardContent>
-        <Input type="number" className={""} />
-      </CardContent>
-      <Button className={"bg-blue-500"}>Add</Button>
-    </Card>
-  );
-};
-
 // Main
-function Credits() {
+function Credits({ apiUrl }) {
   const [productsData, setProductsData] = useState([]);
   const [salesData, setSalesData] = useState([]);
   const [creditsList, setCreditsList] = useState([]);
@@ -80,8 +179,7 @@ function Credits() {
     getSales(setSalesData);
     // Update the CreditsList with the latest data
     getCredits(setCreditsList);
-
-  }, [productsData, salesData, creditsList]);
+  }, []);
 
   //filter the search name on the creditsList
   const filteredCredits = creditsList.filter((credit) =>
@@ -95,14 +193,17 @@ function Credits() {
     0
   );
 
-  const handleIsOpen = () => { 
-    setIsOpen(true);
-  }
+  // Handle opening the payment modal ************* adding a window for partial payment
+  const handleIsOpen = () => {
+    if (cPerson === "") {
+      alert("Please select a person to pay");
+      return;
+    }
 
-  const handleFPIsOpen = () => {
-    setFPisOpen(true);
+    setIsOpen(true);
   };
-  //console.log(cPerson);
+
+  //console.log(partial);
   return (
     <div className="flex flex-col items-center justify-start min-h-screen p-4 relative">
       <h1 className="text-2xl font-bold">Credits</h1>
@@ -113,11 +214,7 @@ function Credits() {
           </p>
           <div className="flex items-center px-2 gap-1">
             <Button className={"bg-red-500 ml"} onClick={handleIsOpen}>
-              Partial
-            </Button>
-
-            <Button className={"bg-blue-500"} onClick={handleFPIsOpen}>
-              <BanknoteArrowUp className="" />
+              Payment
             </Button>
           </div>
         </div>
@@ -134,7 +231,7 @@ function Credits() {
         </div>
         <CardContent>
           <table className="w-full">
-            <thead>
+            <thead className="border bg-blue-300">
               <tr>
                 <th className="">Name</th>
                 <th>Date</th>
@@ -154,7 +251,7 @@ function Credits() {
                       setIsOpen(true);
                     }}
                   >
-                    <td>{cname.name}</td>
+                    <td className="pl-2">{cname.name}</td>
                     <td className="text-center">
                       {cname.dateLastCredited
                         ? new Date(cname.dateLastCredited).toLocaleDateString(
@@ -163,7 +260,7 @@ function Credits() {
                         : ""}
                     </td>
                     <td className="text-center">{cname.status}</td>
-                    <td className="text-end">
+                    <td className="text-end pr-2">
                       ₱{Number(cname.totalCredit).toFixed(2)}
                     </td>
                   </tr>
@@ -183,17 +280,9 @@ function Credits() {
           setPartial={setPartial}
           setIsOpen={setIsOpen}
           cPerson={cPerson}
-        />
-      </div>
-      <div
-        className={`w-full h-screen absolute flex justify-center items-center ${
-          FPisOpen ? "block" : "hidden"
-        }`}
-      >
-        <FullPayment
-          setPartial={setPartial}
-          setFPisOpen={setFPisOpen}
-          cPerson={cPerson}
+          creditsList={creditsList}
+          partial={partial}
+          apiUrl={apiUrl}
         />
       </div>
     </div>

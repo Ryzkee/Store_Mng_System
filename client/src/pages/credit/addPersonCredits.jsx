@@ -11,28 +11,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getCredits } from "@/support/helper";
-import axios, { all } from "axios";
+import axios from "axios";
 
-function AddPerson({ setAddPersonCredits, allItems, setAllItems }) {
+function AddPerson({ setAddPersonCredits, allItems, setAllItems, apiUrl }) {
   const [name, setName] = useState("");
   const [creditsList, setCreditsList] = useState([]);
 
   useEffect(() => {
     //update the data from the credits data
     getCredits(setCreditsList);
-  },[creditsList])
+  }, [creditsList]);
 
   const handleAddPerson = async () => {
-
     if (!name) {
-      alert('Please Enter the Credit Name!!');
+      alert("Please Enter the Credit Name!!");
       return;
     }
-
-    // if (creditsList.find(cname => cname.name) == name) {
-      
-
-    // }
 
     const personData = {
       name: name,
@@ -44,14 +38,14 @@ function AddPerson({ setAddPersonCredits, allItems, setAllItems }) {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/add_credit_person",
+        `${apiUrl}/add_credit_person`,
         personData
       );
 
       // update stock quantities in the database
       try {
         const response = await axios.post(
-          "http://localhost:3000/update_stock",
+          `${apiUrl}/update_stock`,
           allItems.map((item) => ({
             barcode: item.barcode,
             qty: item.qty,
@@ -83,7 +77,7 @@ function AddPerson({ setAddPersonCredits, allItems, setAllItems }) {
   };
 
   //console.log(allItems);
-  //console.log(name);
+  //console.log(apiUrl);
   return (
     <Card className={"w-90 mt-10"}>
       <CardTitle className={"flex justify-between items-center px-5"}>

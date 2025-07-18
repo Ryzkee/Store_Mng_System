@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 
-function Login({ users }) {
+function Login({ users, apiUrl }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorLoginUname, setErrorLoginUname] = useState(false);
@@ -22,7 +22,7 @@ function Login({ users }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:3000/login", {
+      const res = await axios.post(`${apiUrl}/login`, {
         username,
         password,
       });

@@ -16,7 +16,7 @@ import WindowView from "./purchase/view";
 import AddPersonCredits from "./credit/addPersonCredits"
 import axios from "axios";
 
-function Purchase() {
+function Purchase({ apiUrl }) {
   const [productsData, setProductsData] = useState([]);
   const [searchBcode, setsearchBcode] = useState("");
   const [foundItem, setFoundItem] = useState(null);
@@ -142,7 +142,7 @@ function Purchase() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/add_purchase",
+        `${apiUrl}/add_purchase`,
         purchaseDetails
       );
       if (response.status !== 200) {
@@ -152,7 +152,7 @@ function Purchase() {
       // update stock quantities in the database
       try {
         const response = await axios.post(
-          "http://localhost:3000/update_stock",
+          `${apiUrl}/update_stock`,
           allItems.map((item) => ({
             barcode: item.barcode,
             qty: item.qty,
@@ -183,7 +183,7 @@ function Purchase() {
   };
 
   //console.log(allItems);
-  //console.log(pId);
+  //console.log(apiUrl);
   return (
     <div className="p-1 relative">
       {/* all add product to buy */}
@@ -449,6 +449,7 @@ function Purchase() {
           setAddPersonCredits={setAddPersonCredits}
           allItems={allItems}
           setAllItems={setAllItems}
+          apiUrl={apiUrl}
         />
       </div>
     </div>

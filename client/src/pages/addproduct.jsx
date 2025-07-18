@@ -3,8 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { getallProducts } from "@/support/helper.js";
+import { X } from "lucide-react";
+import axios from "axios";
 
-function AddProduct() {
+function AddProduct({ apiUrl }) {
   const [barcode, setBarcode] = useState("");
   const [productName, setProductName] = useState("");
   const [investment, setInvestment] = useState("");
@@ -20,14 +22,7 @@ function AddProduct() {
 
   useEffect(() => {
     getallProducts(setProductsData);
-
-    if (barcodeExists) {
-      setExistBarcode(true);
-      return;
-    } else {
-      setExistBarcode(false);
-    }
-  }, [productsData]);
+  }, []);
 
   const barcodeExists = productsData.find(
     (item) => String(item.barcode).trim() === String(barcode).trim()
@@ -46,14 +41,23 @@ function AddProduct() {
       updatetime: new Date().toISOString(),
       status: "available",
     };
+
+    if (barcodeExists) {
+      setExistBarcode(true);
+      alert("Barcode already exists.");
+      return;
+    }
+
     try {
-      const response = await fetch("http://localhost:3000/add_product", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(productData),
-      });
+      const response = await axios.post(`${apiUrl}/add_product`, productData);
+      console.log("Product added successfully:", response.data);
+
+      // Reset form fields
+      setBarcode("");
+      setProductName("");
+      setInvestment("");
+      setProfit("");
+      setStockQty("");
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -61,12 +65,6 @@ function AddProduct() {
 
       const data = await response.json();
       console.log("Product added successfully:", data);
-      // Reset form fields
-      setBarcode("");
-      setProductName("");
-      setInvestment("");
-      setProfit("");
-      setStockQty("");
     } catch (error) {
       console.error("Error adding product:", error);
     }
@@ -92,14 +90,18 @@ function AddProduct() {
               placeholder="BarCode"
               value={barcode}
               onChange={(e) => setBarcode(e.target.value)}
-              className={`${barcodeExists ? "border-red-500" : ""}`}
+              className={`${barcodeExists ? "border-red-500" : ""} ${
+                barcode === "" ? "border-red-500" : ""
+              }`}
               required
+              autoFocus
             />
             <Input
               type="text"
               placeholder="Product Name"
               value={productName}
               onChange={(e) => setProductName(e.target.value.toUpperCase())}
+              className={`${productName === "" ? "border-red-500" : ""}`}
               required
             />
             <Input
@@ -107,18 +109,23 @@ function AddProduct() {
               placeholder="Investment"
               value={investment}
               onChange={(e) => setInvestment(e.target.value)}
+              className={`${investment === "" ? "border-red-500" : ""}`}
+              required
             />
             <Input
               type="number"
               placeholder="Profit"
               value={profit}
               onChange={(e) => setProfit(e.target.value)}
+              className={`${profit === "" ? "border-red-500" : ""}`}
+              required
             />
             <Input
               placeholder="Stock Quantity"
               type="number"
               value={stockQty}
               onChange={(e) => setStockQty(e.target.value)}
+              className={`${stockQty === "" ? "border-red-500" : ""}`}
               required
             />
           </div>

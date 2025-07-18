@@ -15,24 +15,29 @@ function App() {
   const [users, setUsers] = useState([]);
   const [productsData, setProductsData] = useState([]);
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     // Fetching username and products from the server
     getUsername(setUsers);
     getallProducts(setProductsData);
   }, []);
 
-  //console.log(productsData);
+  //console.log(apiUrl);
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login users={users} />}/>
+        <Route path="/" element={<Login users={users} apiUrl={apiUrl} />} />
         <Route path="dashboard" element={<Dashboard />}>
-          <Route index element={<DataList productsData={productsData} />} />
-          <Route path="/dashboard/add_product" element={<AddProduct/>} />
-          <Route path="/dashboard/view_list" element={<ViewList productData={productsData} />} />
-          <Route path="/dashboard/purchase" element={<Purchase />} />
+          <Route index element={<DataList productsData={productsData} apiUrl={apiUrl} />} />
+          <Route path="/dashboard/add_product" element={<AddProduct apiUrl={apiUrl} />} />
+          <Route
+            path="/dashboard/view_list"
+            element={<ViewList productData={productsData} apiUrl={apiUrl} />}
+          />
+          <Route path="/dashboard/purchase" element={<Purchase apiUrl={apiUrl} />} />
           <Route path="/dashboard/sales" element={<Sales />} />
-          <Route path="/dashboard/credits" element={<Credits />} />
+          <Route path="/dashboard/credits" element={<Credits apiUrl={apiUrl} />} />
         </Route>
       </Routes>
     </BrowserRouter>

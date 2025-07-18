@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { getallProducts, getSales } from "@/support/helper";
 
-function DataList() {
+function DataList({ apiUrl }) {
   const [productsData, setProductsData] = useState([]);
   const [salesData, setSalesData] = useState([]);
 
@@ -14,7 +14,7 @@ function DataList() {
     getSales(setSalesData);
   }, [productsData, salesData]);
 
-  console.log(salesData);
+  //console.log(salesData);
   return (
     <div className="flex flex-wrap gap-x-4  items-start  h-auto w-full min-h-screen p-4">
       <Card

@@ -22,7 +22,7 @@ import { getallProducts } from "@/support/helper";
 import DeleteWindow from "../pages/viewlist/delete_product";
 import UpdateProduct from "../pages/viewlist/update_product";
 
-function ViewList() {
+function ViewList({ apiUrl }) {
   const [productsData, setProductsData] = useState([]);
   const [search, setSearch] = useState("");
   const [valuePrice, setvaluePrice] = useState("Retail");
@@ -89,10 +89,10 @@ function ViewList() {
     0
   );
 
-  console.log(productsData);
-  console.log(valuePrice);
-  console.log(updateWindValue);
-  console.log(getIdNum);
+  // console.log(productsData);
+  // console.log(valuePrice);
+  // console.log(updateWindValue);
+  // console.log(getIdNum);
   return (
     <div className="w-full min-h-screen flex-col justify-center items-center relative">
       <div className="w-full flex justify-between p-4">

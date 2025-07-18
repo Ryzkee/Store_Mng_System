@@ -171,6 +171,17 @@ app.delete("/delete_product/:id", async (req, res) => {
   }
 });
 
+//delete credit person
+app.post("/delete_credit_by_name", async (req, res) => {
+  const { name } = req.body;
+  try { 
+    await CreditPerson.deleteMany({ name });
+    res.json({ success: true, message: "Credit person deleted" });
+  } catch (error) {
+    res.json({ success: false, error: "Error deleting credit person" });
+  }
+});
+
 // update product
 app.put("/update/product/:id", async (req, res) => {
   const { barcode, productName, investment, profit, stockQty } = req.body;
@@ -209,6 +220,20 @@ app.post("/update_stock", async (req, res) => {
   }
 });
 
+//update paytial payment
+app.post("/add_partial_payment", async (req, res) => {
+  const { name, partialpayment } = req.body;
+  try {
+    const result = await CreditPerson.updateMany(
+      { name },
+      { $inc: { partialpayment: Number(partialpayment) } }
+    );
+    res.json({ success: true, message: "Partial payment updated", result });
+  } catch (error) {
+    res.json({ success: false, error: "Error updating partial payment" });
+  }
+});
+
 // add new purchase
 app.post("/add_purchase", async (req, res) => {
   const { orderId, items, totalPrice } = req.body;
@@ -227,5 +252,5 @@ app.post("/add_purchase", async (req, res) => {
 });
 
 app.listen(process.env.PORT, () => {
-  console.log("Server is running on port 3000");
+  console.log("Server is running on port", process.env.PORT);
 });
