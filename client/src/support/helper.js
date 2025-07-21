@@ -38,8 +38,8 @@ export const getSales = async (setSalesData) => {
 export const getCredits = async (setCreditsList) => {
   try {
     await axios
-      .get("http://localhost:3000/get/creditsList")
-      .then((response) => setCreditsList(response.data))
+      .get(`${apiUrl}/get/creditsList`)
+      .then((response) => setCreditsList(response.data));
       //.catch((error) => console.error("Error fetching products:", error));
   } catch (error) {
     //console.error("Error in getCredits", error);
