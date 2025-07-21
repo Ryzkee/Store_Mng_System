@@ -157,7 +157,7 @@ function ViewList({ apiUrl }) {
           <TableBody>
             {filteredProducts.map((items, index) => {
               return (
-                <TableRow key={index} className={`${items.stockQty === 0 ? "bg-red-300" : ""}`}>
+                <TableRow key={index} className={`${items.stockQty === 0 ? "bg-red-200" : ""} ${items.stockQty < 3 ? "bg-yellow-200" : ""}`}>
                   {hidetablesCells && <TableCell>{items.barcode}</TableCell>}
                   <TableCell
                     className={"overflow-hidden"}
