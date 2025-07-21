@@ -1,9 +1,11 @@
 import axios from "axios";
 
+const apiUrl = "https://store-mng-system-backebd.onrender.com";
+
 export const getUsername = async (setUsers) => {
   try {
     await axios
-      .get("http://localhost:3000/get/username")
+      .get(`${apiUrl}/get/username`)
       .then((response) => setUsers(response.data))
       //.catch((error) => console.error("Error fetching username:", error));
   } catch (error) {
@@ -14,7 +16,7 @@ export const getUsername = async (setUsers) => {
 export const getallProducts = async (setProductsData) => {
   try {
     await axios
-      .get("http://localhost:3000/get/products")
+      .get(`${apiUrl}/get/products`)
       .then((response) => setProductsData(response.data))
       //.catch((error) => console.error("Error fetching products:", error));
   } catch (error) {
@@ -25,7 +27,7 @@ export const getallProducts = async (setProductsData) => {
 export const getSales = async (setSalesData) => {
   try {
     await axios
-      .get("http://localhost:3000/get/orders")
+      .get(`${apiUrl}/get/orders`)
       .then((response) => setSalesData(response.data))
       //.catch((error) => console.error("Error fetching sales data:", error));
   } catch (error) {
