@@ -11,6 +11,12 @@ import Credits from "./pages/credits.jsx";
 import axios from "axios";
 import { getUsername, getallProducts } from '@/support/helper.js';
 
+function RequireAuth({ children }) {
+  // Example: check if a token exists in localStorage
+  const isLoggedIn = !!localStorage.getItem("token");
+  return isLoggedIn ? children : <Navigate to="/" />;
+}
+
 function App() {
   const [users, setUsers] = useState([]);
   const [productsData, setProductsData] = useState([]);
@@ -28,16 +34,35 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login users={users} apiUrl={apiUrl} />} />
-        <Route path="dashboard" element={<Dashboard />}>
-          <Route index element={<DataList productsData={productsData} apiUrl={apiUrl} />} />
-          <Route path="/dashboard/add_product" element={<AddProduct apiUrl={apiUrl} />} />
+        <Route
+          path="dashboard"
+          element={
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
+          }
+        >
+          <Route
+            index
+            element={<DataList productsData={productsData} apiUrl={apiUrl} />}
+          />
+          <Route
+            path="/dashboard/add_product"
+            element={<AddProduct apiUrl={apiUrl} />}
+          />
           <Route
             path="/dashboard/view_list"
             element={<ViewList productData={productsData} apiUrl={apiUrl} />}
           />
-          <Route path="/dashboard/purchase" element={<Purchase apiUrl={apiUrl} />} />
+          <Route
+            path="/dashboard/purchase"
+            element={<Purchase apiUrl={apiUrl} />}
+          />
           <Route path="/dashboard/sales" element={<Sales />} />
-          <Route path="/dashboard/credits" element={<Credits apiUrl={apiUrl} />} />
+          <Route
+            path="/dashboard/credits"
+            element={<Credits apiUrl={apiUrl} />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>
