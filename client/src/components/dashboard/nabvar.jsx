@@ -22,8 +22,16 @@ import {
   BanknoteArrowUp
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Nabvar() {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+      localStorage.removeItem("token");
+      navigate("/"); // Redirect to login
+  };
+  
   return (
     <DropdownMenu className="w-auto">
       <DropdownMenuTrigger asChild>
@@ -75,7 +83,10 @@ function Nabvar() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive">
+        <DropdownMenuItem
+          className="cursor-pointer text-destructive focus:text-destructive"
+          onClick={handleLogout}
+        >
           <Link to="/" className="flex items-center">
             <LogOut className="mr-2 h-4 w-4" />
             Logout

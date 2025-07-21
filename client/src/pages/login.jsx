@@ -27,6 +27,7 @@ function Login({ users, apiUrl }) {
         password,
       });
       if (res.data.success) {
+        localStorage.setItem("token", res.data.token); // Save token
         window.location.href = "/dashboard";
       } else {
         //alert("Invalid username or password");
