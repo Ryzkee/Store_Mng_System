@@ -15,7 +15,7 @@ function App() {
   const [users, setUsers] = useState([]);
   const [productsData, setProductsData] = useState([]);
 
-  const apiUrl = 'https://store-mng-system-backend.onrender.com';
+  const apiUrl = 'https://store-mng-system-backebd.onrender.com';
 
   useEffect(() => {
     // Fetching username and products from the server
