@@ -10,6 +10,7 @@ const bcrypt = require("bcrypt");
 
 //import routes
 const authRoute = require("./routes/auth.js");
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(express.json());
@@ -251,6 +252,6 @@ app.post("/add_purchase", async (req, res) => {
   }
 });
 
-app.listen(process.env.PORT, () => {
-  console.log("Server is running on port", process.env.PORT);
+app.listen(PORT, () => {
+  console.log("Server is running on port", PORT);
 });
