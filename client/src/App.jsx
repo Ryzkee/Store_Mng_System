@@ -15,7 +15,7 @@ function App() {
   const [users, setUsers] = useState([]);
   const [productsData, setProductsData] = useState([]);
 
-  const apiUrl = import.meta.env.VITE_API_URL;
+  const apiUrl = 'https://store-mng-system-backend.onrender.com';
 
   useEffect(() => {
     // Fetching username and products from the server
