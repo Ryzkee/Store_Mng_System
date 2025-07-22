@@ -6,6 +6,22 @@ import { getallProducts } from "@/support/helper.js";
 import { X } from "lucide-react";
 import axios from "axios";
 
+function Notification({ setClosedNotification, message }) {
+  return (
+    <Card className="fixed bottom-4 right-4 w-80 bg-white shadow-lg px-5" >
+      <CardHeader className="flex justify-between items-center">
+        <CardTitle className="text-lg font-semibold">Notification</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm">{message}</p>
+      </CardContent>
+      <Button className=" w-full" onClick={() => setClosedNotification(false)}>
+        Close
+      </Button>
+    </Card>
+  )
+}
+
 function AddProduct({ apiUrl }) {
   const [barcode, setBarcode] = useState("");
   const [productName, setProductName] = useState("");
@@ -14,6 +30,10 @@ function AddProduct({ apiUrl }) {
   const [stockQty, setStockQty] = useState("");
   const [productsData, setProductsData] = useState([]);
   const [existBarcode, setExistBarcode] = useState(false);
+
+  // Notification Notes
+  const [message, setMessage] = useState("");
+  const [closedNotification, setClosedNotification] = useState(false);
 
   //unitPrice
   const unitPrice = (Number(investment) + Number(profit)).toFixed(2);
@@ -42,9 +62,19 @@ function AddProduct({ apiUrl }) {
       status: "available",
     };
 
+    // Validate input fields
+    if(!barcode || !productName || !investment || !profit || !stockQty) {
+      setMessage("Please fill in all fields.");
+      setClosedNotification(true);
+      return;
+    }
+
+    // Check if barcode already exists
     if (barcodeExists) {
       setExistBarcode(true);
-      alert("Barcode already exists.");
+      setMessage("Barcode already exists.");
+      setClosedNotification(true);
+      //alert("Barcode already exists.");
       return;
     }
 
@@ -58,6 +88,9 @@ function AddProduct({ apiUrl }) {
       setInvestment("");
       setProfit("");
       setStockQty("");
+      setMessage("Product added successfully.");
+      setClosedNotification(true);
+      setExistBarcode(false);
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -65,13 +98,14 @@ function AddProduct({ apiUrl }) {
 
       const data = await response.json();
       console.log("Product added successfully:", data);
+
     } catch (error) {
       console.error("Error adding product:", error);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-[85%] mt-[-150px]">
         <CardHeader>
           <CardTitle>Add New Product</CardTitle>
@@ -134,6 +168,10 @@ function AddProduct({ apiUrl }) {
           </Button>
         </CardContent>
       </Card>
+      {/* Notification or Notes */}
+      <div className={`w-full h-screen fixed bottom-4 right-4 ${closedNotification ? "block" : "hidden"}`}>
+        <Notification setClosedNotification={setClosedNotification} message={message} />
+      </div>
     </div>
   );
 }
