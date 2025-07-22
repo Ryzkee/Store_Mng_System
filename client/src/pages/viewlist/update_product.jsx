@@ -10,6 +10,7 @@ function UpdateProduct({
   setUpdateWindValue,
   setProductsData,
   productsData,
+  apiUrl
 }) {
   const handleCloseWindow = () => setUpdateWindValue(false);
   const [closeWindow, setCloseWindow] = useState(false);
@@ -33,7 +34,7 @@ function UpdateProduct({
   const handleUpdateProduct = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/update/product/${id}`,
+        `${apiUrl}/update/product/${id}`,
         {
           barcode,
           productName,

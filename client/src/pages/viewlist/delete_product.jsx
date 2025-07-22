@@ -10,13 +10,14 @@ function DeleteConfirme({
   setProductsData,
   productsData,
   prodName,
+  apiUrl
 }) {
   const handleCloseWindow = () => setDeleteWindValue(false);
 
   //handle delete product
   const handleDeleteProduct = async () => {
     try {
-      await axios.delete(`http://localhost:3000/delete_product/${id}`);
+      await axios.delete(`${apiUrl}/delete_product/${id}`);
       setProductsData(productsData.filter((item) => item._id !== id));
       setDeleteWindValue(false);
     } catch (error) {

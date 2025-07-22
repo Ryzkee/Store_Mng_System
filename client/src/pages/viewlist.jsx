@@ -131,7 +131,8 @@ function ViewList({ apiUrl }) {
             UnitPrice: <span className="font-bold">{valuePrice}</span>
           </h4>
           <h4 className="text-[10pt] font-light">
-            Total Products: <span className="font-bold">{productsData.length}</span>
+            Total Products:{" "}
+            <span className="font-bold">{productsData.length}</span>
           </h4>
         </div>
       </div>
@@ -157,7 +158,12 @@ function ViewList({ apiUrl }) {
           <TableBody>
             {filteredProducts.map((items, index) => {
               return (
-                <TableRow key={index} className={`${items.stockQty === 0 ? "bg-red-200" : ""} ${items.stockQty < 3 ? "bg-yellow-200" : ""}`}>
+                <TableRow
+                  key={index}
+                  className={`${items.stockQty === 0 ? "bg-red-200" : ""} ${
+                    items.stockQty < 3 ? "bg-yellow-200" : ""
+                  }`}
+                >
                   {hidetablesCells && <TableCell>{items.barcode}</TableCell>}
                   <TableCell
                     className={"overflow-hidden"}
@@ -211,6 +217,7 @@ function ViewList({ apiUrl }) {
           setProductsData={setProductsData}
           productsData={productsData}
           prodName={prodName}
+          apiUrl={apiUrl}
         />
       </div>
       <div
@@ -223,6 +230,7 @@ function ViewList({ apiUrl }) {
           setUpdateWindValue={setUpdateWindValue}
           setProductsData={setProductsData}
           productsData={productsData}
+          apiUrl={apiUrl}
         />
       </div>
     </div>

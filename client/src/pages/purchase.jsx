@@ -40,13 +40,24 @@ function Purchase({ apiUrl }) {
     if (foundItem && Number(qty) > foundItem.stockQty) {
       alert("Insufficient stock quantity.");
       setQty(foundItem.stockQty.toString()); // Reset and display the available stock qty
+      setvaluePrice("Retail"); // Reset to Retail price
     }
 
     // Update the final price: Auto mode uses calculated price, Manual uses user input
     if (manualPrice === "Auto") {
       setFinalPrice(productTotalPrice.toFixed(2));
     }
-    // In Manual mode, do not overwrite finalPrice so user can edit it
+
+    // Set the quantity based on the selected price value
+    if (valuePrice === "Wholesalex12") {
+      setQty("12");
+    } else if (valuePrice === "Wholesalex10") {
+      setQty("10");
+    } else if (valuePrice === "Wholesalex6") {
+      setQty("6");
+    } else if (valuePrice === "Wholesalex5") {
+      setQty("5");
+    }
   }, [productsData]);
 
   //search item
@@ -206,7 +217,7 @@ function Purchase({ apiUrl }) {
               <p className="w-[15%] text-center">Qty</p>
               <p className="w-[25%] text-end">Price</p>
             </div>
-            <div className="h-[82%] overflow-y-auto bg-green-200 px-1">
+            <div className="h-[82%] overflow-y-auto bg-green-100 px-1">
               {allItems.map((items, index) => {
                 return (
                   <div
