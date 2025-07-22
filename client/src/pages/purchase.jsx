@@ -58,6 +58,13 @@ function Purchase({ apiUrl }) {
     } else if (valuePrice === "Wholesalex5") {
       setQty("5");
     }
+
+    // remove data if the searchBcode is empty
+    if (searchBcode.length === 0) {
+      setFoundItem(null);
+      setvaluePrice("Retail");
+      setQty("1");
+    }
   }, [productsData]);
 
   //search item

@@ -139,21 +139,23 @@ function ViewList({ apiUrl }) {
       <div className="w-full min-h-screen px-1">
         <Table className={""}>
           <TableHeader>
-            {hidetablesCells && (
-              <TableHead className={"border border-black"}>BarCode</TableHead>
-            )}
-            <TableHead className={"border border-black"}>
-              Name of Product
-            </TableHead>
-            <TableHead className={"border text-center border-black"}>
-              Stocks
-            </TableHead>
-            <TableHead className={"border text-center border-black"}>
-              UnitPrice
-            </TableHead>
-            <TableHead className={"border text-center border-black"}>
-              Actions
-            </TableHead>
+            <TableRow>
+              {hidetablesCells && (
+                <TableHead className={"border border-black"}>BarCode</TableHead>
+              )}
+              <TableHead className={"border border-black"}>
+                Name of Product
+              </TableHead>
+              <TableHead className={"border text-center border-black"}>
+                Stocks
+              </TableHead>
+              <TableHead className={"border text-center border-black"}>
+                UnitPrice
+              </TableHead>
+              <TableHead className={"border text-center border-black"}>
+                Actions
+              </TableHead>
+            </TableRow>
           </TableHeader>
           <TableBody>
             {filteredProducts.map((items, index) => {
